@@ -57,7 +57,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN }}
     
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -73,15 +73,23 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
+        git remote set-url origin https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
     
     - name: Bump version
       run: |
-        bump2version --config-file .bumpversion.cfg ${{ github.event.inputs.version_type }}
+        echo "Current version before bump:"
+        grep -r "version.*=" pyproject.toml pygarble/__init__.py
+        echo "Running bump2version..."
+        bump2version --config-file .bumpversion.cfg --allow-dirty ${{ github.event.inputs.version_type }}
+        echo "Version after bump:"
+        grep -r "version.*=" pyproject.toml pygarble/__init__.py
+        echo "Git status:"
+        git status
     
     - name: Push changes
       run: |
-        git push
-        git push --tags
+        git push origin main
+        git push origin --tags
 
   build:
     runs-on: ubuntu-latest
