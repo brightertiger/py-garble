@@ -11,9 +11,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       contents: read
       pages: write
@@ -56,13 +53,15 @@ jobs:
         "
     
     - name: Upload documentation artifact
-      if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+      if: github.ref == 'refs/heads/main' || github.event_name == 'release' || startsWith(github.ref, 'refs/heads/feature/')
       uses: actions/upload-artifact@v4
       with:
-        name: github-pages
+        name: github-pages-${{ github.ref_name }}
         path: ./docs/_build/html
     
     - name: Deploy to GitHub Pages
       id: deployment
-      if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+      if: github.ref == 'refs/heads/main' || github.event_name == 'release' || startsWith(github.ref, 'refs/heads/feature/')
       uses: actions/deploy-pages@v4
+      with:
+        artifact_name: github-pages-${{ github.ref_name }}
