@@ -1,7 +1,9 @@
 Quick Start Guide
 =================
 
-This guide will get you up and running with pygarble in just a few minutes.
+**Detect gibberish, garbled text, and corrupted content with high accuracy using advanced machine learning techniques.**
+
+This guide will get you up and running with pygarble in just a few minutes. pygarble is designed to identify nonsensical, garbled, or corrupted text content that often appears in data processing pipelines, user inputs, or automated systems. Whether you're dealing with random character sequences, encoding errors, keyboard mashing, or corrupted data streams, pygarble provides multiple detection strategies to filter out unwanted content and maintain data quality.
 
 Basic Usage
 -----------

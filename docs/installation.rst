@@ -1,6 +1,8 @@
 Installation
 ============
 
+**Detect gibberish, garbled text, and corrupted content with high accuracy using advanced machine learning techniques.**
+
 Installation from PyPI
 ----------------------
 

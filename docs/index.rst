@@ -1,7 +1,9 @@
 pygarble Documentation
 ========================
 
-A Python package for detecting garbled text using multiple detection strategies with a scikit-learn-like interface.
+**Detect gibberish, garbled text, and corrupted content with high accuracy using advanced machine learning techniques.**
+
+pygarble is a powerful Python library designed to identify nonsensical, garbled, or corrupted text content that often appears in data processing pipelines, user inputs, or automated systems. Whether you're dealing with random character sequences, encoding errors, keyboard mashing, or corrupted data streams, pygarble provides multiple detection strategies to filter out unwanted content and maintain data quality. The library uses statistical analysis, entropy calculations, pattern matching, and language detection to distinguish between meaningful text and gibberish with configurable sensitivity levels.
 
 .. toctree::
    :maxdepth: 2
