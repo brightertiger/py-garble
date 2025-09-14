@@ -11,9 +11,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       contents: read
       pages: write
@@ -55,12 +52,23 @@ jobs:
         print('Documentation build successful!')
         "
     
+    - name: Debug artifact path
+      if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+      run: |
+        echo "Current branch: ${{ github.ref }}"
+        echo "Event name: ${{ github.event_name }}"
+        echo "Artifact path contents:"
+        ls -la ./docs/_build/html/
+        echo "Checking if index.html exists:"
+        test -f ./docs/_build/html/index.html && echo "✅ index.html exists" || echo "❌ index.html missing"
+    
     - name: Upload documentation artifact
       if: github.ref == 'refs/heads/main' || github.event_name == 'release'
       uses: actions/upload-artifact@v4
       with:
         name: github-pages
         path: ./docs/_build/html
+        retention-days: 1
     
     - name: Deploy to GitHub Pages
       id: deployment
