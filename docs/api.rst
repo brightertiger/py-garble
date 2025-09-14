@@ -58,3 +58,9 @@ Language Detection Strategy
 
 .. autoclass:: pygarble.strategies.language_detection.LanguageDetectionStrategy
    :members:
+
+English Word Validation Strategy
+--------------------------------
+
+.. autoclass:: pygarble.strategies.english_word_validation.EnglishWordValidationStrategy
+   :members:
