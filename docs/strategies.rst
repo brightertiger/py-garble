@@ -1,7 +1,7 @@
 Detection Strategies
 ====================
 
-pygarble provides 6 different strategies for detecting garbled text. Each strategy implements a different approach and is suitable for different types of garbled text.
+pygarble provides 7 different strategies for detecting garbled text. Each strategy implements a different approach and is suitable for different types of garbled text.
 
 Overview
 --------
@@ -168,6 +168,32 @@ Language Detection Strategy
    detector.predict("asdfghjkl")             # True - not detected as English
    detector.predict("Bonjour le monde")     # True - detected as French, not English
 
+English Word Validation Strategy
+--------------------------------
+
+**Purpose**: Tokenizes text and validates words against an English dictionary using pyspellchecker.
+
+**Implementation**: Uses pyspellchecker to check each word against an English dictionary. Garbled text often contains many invalid English words.
+
+**Algorithm**:
+1. Tokenize text into individual words (alphabetic characters only)
+2. Check each word against English dictionary
+3. Calculate ratio of valid words to total words
+4. Compare against threshold to determine if text is garbled
+
+**Parameters**:
+- ``valid_word_threshold`` (float, default: 0.7): Minimum required ratio of valid English words
+
+**Example**:
+
+.. code-block:: python
+
+   detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, valid_word_threshold=0.7)
+   
+   detector.predict("hello world this is normal text")  # False - all words are valid
+   detector.predict("asdfghjkl qwertyuiop zxcvbnm")    # True - no valid words
+   detector.predict("hello asdfgh world qwerty")        # False - 50% valid words (above threshold)
+
 Choosing the Right Strategy
 ---------------------------
 
@@ -182,5 +208,7 @@ Choosing the Right Strategy
 **Entropy Based**: Best for detecting text with low character diversity (repetitive patterns)
 
 **Language Detection**: Best for detecting text that's not in the expected language
+
+**English Word Validation**: Best for detecting text with many invalid English words (gibberish, typos, non-English words)
 
 For best results, consider using multiple strategies in combination. See :doc:`examples` for examples.

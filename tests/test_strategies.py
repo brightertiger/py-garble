@@ -77,6 +77,21 @@ class TestStrategies:
         assert 0.0 <= proba_repeated <= 1.0
         assert 0.0 <= proba_diverse <= 1.0
 
+    def test_english_word_validation_detector(self):
+        detector = GarbleDetector(
+            Strategy.ENGLISH_WORD_VALIDATION, valid_word_threshold=0.7
+        )
+        assert detector.predict("hello world this is normal text") is True
+        assert detector.predict("asdfghjkl qwertyuiop zxcvbnm") is False
+
+    def test_english_word_validation_proba(self):
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
+        proba_valid = detector.predict_proba("hello world this is normal text")
+        proba_invalid = detector.predict_proba("asdfghjkl qwertyuiop zxcvbnm")
+        assert proba_valid > proba_invalid
+        assert 0.0 <= proba_valid <= 1.0
+        assert 0.0 <= proba_invalid <= 1.0
+
 
 class TestStrategy:
     def test_strategy_enum_values(self):
@@ -86,3 +101,4 @@ class TestStrategy:
         assert Strategy.STATISTICAL_ANALYSIS.value == "statistical_analysis"
         assert Strategy.ENTROPY_BASED.value == "entropy_based"
         assert Strategy.LANGUAGE_DETECTION.value == "language_detection"
+        assert Strategy.ENGLISH_WORD_VALIDATION.value == "english_word_validation"

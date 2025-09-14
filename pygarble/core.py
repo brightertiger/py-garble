@@ -9,6 +9,7 @@ from .strategies import (
     PatternMatchingStrategy,
     StatisticalAnalysisStrategy,
     WordLengthStrategy,
+    EnglishWordValidationStrategy,
 )
 
 
@@ -19,6 +20,7 @@ class Strategy(Enum):
     STATISTICAL_ANALYSIS = "statistical_analysis"
     ENTROPY_BASED = "entropy_based"
     LANGUAGE_DETECTION = "language_detection"
+    ENGLISH_WORD_VALIDATION = "english_word_validation"
 
 
 class GarbleDetector:
@@ -43,6 +45,7 @@ class GarbleDetector:
             Strategy.STATISTICAL_ANALYSIS: StatisticalAnalysisStrategy,
             Strategy.ENTROPY_BASED: EntropyBasedStrategy,
             Strategy.LANGUAGE_DETECTION: LanguageDetectionStrategy,
+            Strategy.ENGLISH_WORD_VALIDATION: EnglishWordValidationStrategy,
         }
 
         if self.strategy not in strategy_map:

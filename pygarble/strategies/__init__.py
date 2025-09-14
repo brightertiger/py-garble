@@ -5,6 +5,7 @@ from .language_detection import LanguageDetectionStrategy
 from .pattern_matching import PatternMatchingStrategy
 from .statistical_analysis import StatisticalAnalysisStrategy
 from .word_length import WordLengthStrategy
+from .english_word_validation import EnglishWordValidationStrategy
 
 __all__ = [
     "BaseStrategy",
@@ -14,4 +15,5 @@ __all__ = [
     "StatisticalAnalysisStrategy",
     "EntropyBasedStrategy",
     "LanguageDetectionStrategy",
+    "EnglishWordValidationStrategy",
 ]

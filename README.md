@@ -6,7 +6,7 @@ pygarble is a powerful Python library designed to identify nonsensical, garbled,
 
 ## Features
 
-- **Multiple Detection Strategies**: Choose from 6 different garble detection algorithms
+- **Multiple Detection Strategies**: Choose from 7 different garble detection algorithms
 - **Scikit-learn Interface**: Familiar `predict()` and `predict_proba()` methods
 - **Configurable Thresholds**: Adjust sensitivity for each strategy
 - **Probability Scores**: Get confidence scores for garble detection
@@ -213,6 +213,32 @@ detector.predict("asdfghjkl")             # True - not detected as English
 detector.predict("Bonjour le monde")     # True - detected as French, not English
 ```
 
+### 7. English Word Validation (`ENGLISH_WORD_VALIDATION`)
+
+**Implementation Logic**: Tokenizes text and validates words against an English dictionary using pyspellchecker. Garbled text often contains many invalid English words.
+
+**Algorithm**:
+1. Tokenize text into individual words (alphabetic characters only)
+2. Check each word against English dictionary
+3. Calculate ratio of valid words to total words
+4. Compare against threshold to determine if text is garbled
+
+**Parameters**:
+- `valid_word_threshold` (float, default: 0.7): Minimum required ratio of valid English words
+
+```python
+detector = GarbleDetector(
+    Strategy.ENGLISH_WORD_VALIDATION,
+    threshold=0.5,
+    valid_word_threshold=0.7  # Minimum ratio of valid English words
+)
+
+# Examples
+detector.predict("hello world this is normal text")  # False - all words are valid
+detector.predict("asdfghjkl qwertyuiop zxcvbnm")    # True - no valid words
+detector.predict("hello asdfgh world qwerty")        # False - 50% valid words (above threshold)
+```
+
 ## Advanced Usage
 
 ### Pattern Matching Configuration
@@ -387,6 +413,7 @@ class Strategy(Enum):
     STATISTICAL_ANALYSIS = "statistical_analysis"
     ENTROPY_BASED = "entropy_based"
     LANGUAGE_DETECTION = "language_detection"
+    ENGLISH_WORD_VALIDATION = "english_word_validation"
 ```
 
 ## Examples
@@ -423,7 +450,8 @@ from pygarble import GarbleDetector, Strategy
 strategies = [
     Strategy.CHARACTER_FREQUENCY,
     Strategy.PATTERN_MATCHING,
-    Strategy.ENTROPY_BASED
+    Strategy.ENTROPY_BASED,
+    Strategy.ENGLISH_WORD_VALIDATION
 ]
 
 text = "suspicious text here"
@@ -546,6 +574,7 @@ for text in mixed_content:
 
 - Python 3.8+
 - fasttext-wheel>=0.9.2 (for language detection strategy)
+- pyspellchecker>=0.8.0 (for English word validation strategy)
 
 ## Development
 
@@ -613,7 +642,8 @@ pygarble/
     ├── pattern_matching.py
     ├── statistical_analysis.py
     ├── entropy_based.py
-    └── language_detection.py
+    ├── language_detection.py
+    └── english_word_validation.py
 ```
 
 Each strategy implements:
@@ -645,10 +675,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Changelog
 
 ### 0.1.1 (Upcoming)
+- **New English Word Validation Strategy**: Added dictionary-based word validation using pyspellchecker
 - **Enhanced Pattern Matching Strategy**: Added configurable named patterns with override capabilities
 - **Improved Whitespace Handling**: Updated Statistical Analysis to exclude whitespace from calculations for consistent sentence/paragraph analysis
 - **Multithreaded Processing**: Added support for parallel processing of large datasets with configurable thread count
 - **New Features**:
+  - English word validation with configurable threshold
   - Named pattern dictionary with descriptive keys
   - `override_defaults` parameter to skip default patterns
   - Custom pattern merging with defaults
