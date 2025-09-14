@@ -79,32 +79,40 @@ class TestStrategies:
 
     def test_english_word_validation_detector(self):
         detector = GarbleDetector(
-            Strategy.ENGLISH_WORD_VALIDATION, valid_word_threshold=0.7
+            Strategy.ENGLISH_WORD_VALIDATION, threshold=0.7
         )
-        assert detector.predict("hello world this is normal text") is True
-        assert detector.predict("asdfghjkl mnbvcxz lkjhgfds") is False
+        assert detector.predict("hello world this is normal text") is False
+        assert detector.predict("asdfghjkl mnbvcxz lkjhgfds") is True
 
     def test_english_word_validation_proba(self):
         detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
         proba_valid = detector.predict_proba("hello world this is normal text")
         proba_invalid = detector.predict_proba("asdfghjkl mnbvcxz lkjhgfds")
-        assert proba_valid > proba_invalid
+        assert proba_invalid > proba_valid
         assert 0.0 <= proba_valid <= 1.0
         assert 0.0 <= proba_invalid <= 1.0
 
     def test_english_word_validation_mixed_content(self):
-        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, valid_word_threshold=0.5)
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, threshold=0.3)
         assert detector.predict("hello world asdfghjkl") is True
-        assert detector.predict("asdfghjkl mnbvcxz hello") is False
+        assert detector.predict("asdfghjkl mnbvcxz hello") is True
 
     def test_english_word_validation_threshold_adjustment(self):
-        detector_strict = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, valid_word_threshold=0.9)
-        detector_loose = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, valid_word_threshold=0.3)
+        detector_strict = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, threshold=0.9)
+        detector_loose = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, threshold=0.3)
         
+        # Text with 50% invalid words
         mixed_text = "hello world asdfghjkl mnbvcxz"
         
+        # With strict threshold (90%), 50% invalid words should NOT be detected as garbled
         assert detector_strict.predict(mixed_text) is False
+        # With loose threshold (30%), 50% invalid words should be detected as garbled
         assert detector_loose.predict(mixed_text) is True
+        
+        # Test with mostly valid text
+        mostly_valid_text = "hello world this is normal text asdfghjkl"
+        assert detector_strict.predict(mostly_valid_text) is False
+        assert detector_loose.predict(mostly_valid_text) is False
 
     def test_english_word_validation_empty_and_whitespace(self):
         detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
@@ -116,21 +124,21 @@ class TestStrategies:
     def test_english_word_validation_numbers_and_symbols(self):
         detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
         assert detector.predict("123 456 789") is False
-        assert detector.predict("hello 123 world") is True
+        assert detector.predict("hello 123 world") is False
         assert detector.predict("!@#$%^&*()") is False
 
     def test_english_word_validation_case_insensitive(self):
         detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
-        assert detector.predict("HELLO WORLD") is True
-        assert detector.predict("Hello World") is True
-        assert detector.predict("hello world") is True
+        assert detector.predict("HELLO WORLD") is False
+        assert detector.predict("Hello World") is False
+        assert detector.predict("hello world") is False
 
     def test_english_word_validation_single_word(self):
         detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
-        assert detector.predict("hello") is True
-        assert detector.predict("asdfghjkl") is False
-        assert detector.predict_proba("hello") == 1.0
-        assert detector.predict_proba("asdfghjkl") == 0.0
+        assert detector.predict("hello") is False
+        assert detector.predict("asdfghjkl") is True
+        assert detector.predict_proba("hello") == 0.0
+        assert detector.predict_proba("asdfghjkl") == 1.0
 
 
 class TestStrategy:

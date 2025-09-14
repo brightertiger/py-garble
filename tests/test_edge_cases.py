@@ -92,11 +92,11 @@ class TestEdgeCases:
     def test_english_word_validation_long_valid_text(self):
         detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
         long_valid_text = "This is a very long sentence with many valid English words that should be recognized by the spell checker and classified as not garbled text because it contains proper English vocabulary throughout the entire string"
-        assert detector.predict(long_valid_text) is True
-        assert detector.predict_proba(long_valid_text) > 0.8
+        assert detector.predict(long_valid_text) is False
+        assert detector.predict_proba(long_valid_text) < 0.2
 
     def test_english_word_validation_long_garbled_text(self):
-        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, threshold=0.2)
         long_garbled_text = "asdfghjkl mnbvcxz lkjhgfds asdfghjkl mnbvcxz lkjhgfds asdfghjkl mnbvcxz lkjhgfds asdfghjkl mnbvcxz lkjhgfds"
-        assert detector.predict(long_garbled_text) is False
-        assert detector.predict_proba(long_garbled_text) < 0.3
+        assert detector.predict(long_garbled_text) is True
+        assert detector.predict_proba(long_garbled_text) > 0.2

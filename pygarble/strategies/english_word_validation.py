@@ -13,16 +13,8 @@ class EnglishWordValidationStrategy(BaseStrategy):
         return words
 
     def _predict_impl(self, text: str) -> bool:
-        words = self._tokenize_text(text)
-        if not words:
-            return False
-
-        unknown_words = self.spell_checker.unknown(words)
-        valid_word_count = len(words) - len(unknown_words)
-        total_words = len(words)
-        
-        threshold = self.kwargs.get("valid_word_threshold", 0.7)
-        return (valid_word_count / total_words) >= threshold
+        proba = self._predict_proba_impl(text)
+        return proba >= 0.5
 
     def _predict_proba_impl(self, text: str) -> float:
         words = self._tokenize_text(text)
@@ -30,7 +22,7 @@ class EnglishWordValidationStrategy(BaseStrategy):
             return 0.0
 
         unknown_words = self.spell_checker.unknown(words)
-        valid_word_count = len(words) - len(unknown_words)
+        invalid_word_count = len(unknown_words)
         total_words = len(words)
         
-        return valid_word_count / total_words
+        return invalid_word_count / total_words
