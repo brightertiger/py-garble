@@ -73,3 +73,30 @@ class TestEdgeCases:
         )  # Long base64-like string
         assert detector.predict(base64_like) is True
         assert detector.predict_proba(base64_like) == 1.0
+
+    def test_english_word_validation_edge_cases(self):
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
+        
+        assert detector.predict("") is False
+        assert detector.predict_proba("") == 0.0
+        
+        assert detector.predict("   ") is False
+        assert detector.predict_proba("   ") == 0.0
+        
+        assert detector.predict("123") is False
+        assert detector.predict_proba("123") == 0.0
+        
+        assert detector.predict("!@#") is False
+        assert detector.predict_proba("!@#") == 0.0
+
+    def test_english_word_validation_long_valid_text(self):
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
+        long_valid_text = "This is a very long sentence with many valid English words that should be recognized by the spell checker and classified as not garbled text because it contains proper English vocabulary throughout the entire string"
+        assert detector.predict(long_valid_text) is True
+        assert detector.predict_proba(long_valid_text) > 0.8
+
+    def test_english_word_validation_long_garbled_text(self):
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
+        long_garbled_text = "asdfghjkl qwertyuiop zxcvbnm asdfghjkl qwertyuiop zxcvbnm asdfghjkl qwertyuiop zxcvbnm asdfghjkl qwertyuiop zxcvbnm"
+        assert detector.predict(long_garbled_text) is False
+        assert detector.predict_proba(long_garbled_text) < 0.3

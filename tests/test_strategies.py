@@ -92,6 +92,46 @@ class TestStrategies:
         assert 0.0 <= proba_valid <= 1.0
         assert 0.0 <= proba_invalid <= 1.0
 
+    def test_english_word_validation_mixed_content(self):
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, valid_word_threshold=0.5)
+        assert detector.predict("hello world asdfghjkl") is True
+        assert detector.predict("asdfghjkl qwertyuiop hello") is False
+
+    def test_english_word_validation_threshold_adjustment(self):
+        detector_strict = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, valid_word_threshold=0.9)
+        detector_loose = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION, valid_word_threshold=0.3)
+        
+        mixed_text = "hello world asdfghjkl qwertyuiop"
+        
+        assert detector_strict.predict(mixed_text) is False
+        assert detector_loose.predict(mixed_text) is True
+
+    def test_english_word_validation_empty_and_whitespace(self):
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
+        assert detector.predict("") is False
+        assert detector.predict("   ") is False
+        assert detector.predict_proba("") == 0.0
+        assert detector.predict_proba("   ") == 0.0
+
+    def test_english_word_validation_numbers_and_symbols(self):
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
+        assert detector.predict("123 456 789") is False
+        assert detector.predict("hello 123 world") is True
+        assert detector.predict("!@#$%^&*()") is False
+
+    def test_english_word_validation_case_insensitive(self):
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
+        assert detector.predict("HELLO WORLD") is True
+        assert detector.predict("Hello World") is True
+        assert detector.predict("hello world") is True
+
+    def test_english_word_validation_single_word(self):
+        detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
+        assert detector.predict("hello") is True
+        assert detector.predict("asdfghjkl") is False
+        assert detector.predict_proba("hello") == 1.0
+        assert detector.predict_proba("asdfghjkl") == 0.0
+
 
 class TestStrategy:
     def test_strategy_enum_values(self):

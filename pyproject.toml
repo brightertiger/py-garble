@@ -32,6 +32,7 @@ classifiers = [
 dependencies = [
     "fasttext-wheel>=0.9.2",
     "numpy>=1.21.0,<2.0",
+    "pyspellchecker>=0.7.0",
 ]
 
 [project.optional-dependencies]
