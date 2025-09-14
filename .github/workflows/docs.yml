@@ -52,8 +52,13 @@ jobs:
         print('Documentation build successful!')
         "
     
+    - name: Upload documentation artifact
+      if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: github-pages
+        path: ./docs/_build/html
+    
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main' || github.event_name == 'release'
       uses: actions/deploy-pages@v4
-      with:
-        path: ./docs/_build/html
