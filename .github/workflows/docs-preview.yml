@@ -1,15 +1,17 @@
-name: Build and Deploy Documentation
+name: Build Documentation Preview
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
-  release:
-    types: [ published ]
+    paths:
+      - 'docs/**'
+      - 'pygarble/**'
+      - 'requirements*.txt'
+      - 'setup.py'
+      - 'pyproject.toml'
 
 jobs:
-  build-and-deploy:
+  build-preview:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,7 +22,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Fetch full history for proper versioning
+        fetch-depth: 0
     
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -53,16 +55,10 @@ jobs:
         "
     
     - name: Upload documentation artifact
-      if: github.ref == 'refs/heads/main' || github.event_name == 'release' || startsWith(github.ref, 'refs/heads/feature/')
       uses: actions/upload-artifact@v4
       with:
-        name: github-pages-${{ github.ref_name }}
+        name: docs-preview-${{ github.event.pull_request.number }}
         path: ./docs/_build/html
-        retention-days: 1
     
-    - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main' || github.event_name == 'release'
-      id: deployment
+    - name: Deploy to GitHub Pages (Preview)
       uses: actions/deploy-pages@v4
-      with:
-        artifact_name: github-pages-${{ github.ref_name }}
