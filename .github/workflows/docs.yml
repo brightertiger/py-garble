@@ -52,16 +52,6 @@ jobs:
         print('Documentation build successful!')
         "
     
-    - name: Debug artifact path
-      if: github.ref == 'refs/heads/main' || github.event_name == 'release'
-      run: |
-        echo "Current branch: ${{ github.ref }}"
-        echo "Event name: ${{ github.event_name }}"
-        echo "Artifact path contents:"
-        ls -la ./docs/_build/html/
-        echo "Checking if index.html exists:"
-        test -f ./docs/_build/html/index.html && echo "✅ index.html exists" || echo "❌ index.html missing"
-    
     - name: Upload documentation artifact
       if: github.ref == 'refs/heads/main' || github.event_name == 'release'
       uses: actions/upload-artifact@v4
@@ -71,6 +61,5 @@ jobs:
         retention-days: 1
     
     - name: Deploy to GitHub Pages
-      id: deployment
       if: github.ref == 'refs/heads/main' || github.event_name == 'release'
       uses: actions/deploy-pages@v4
