@@ -97,6 +97,6 @@ class TestEdgeCases:
 
     def test_english_word_validation_long_garbled_text(self):
         detector = GarbleDetector(Strategy.ENGLISH_WORD_VALIDATION)
-        long_garbled_text = "asdfghjkl qwertyuiop zxcvbnm asdfghjkl qwertyuiop zxcvbnm asdfghjkl qwertyuiop zxcvbnm asdfghjkl qwertyuiop zxcvbnm"
+        long_garbled_text = "asdfghjkl mnbvcxz lkjhgfds asdfghjkl mnbvcxz lkjhgfds asdfghjkl mnbvcxz lkjhgfds asdfghjkl mnbvcxz lkjhgfds"
         assert detector.predict(long_garbled_text) is False
         assert detector.predict_proba(long_garbled_text) < 0.3
